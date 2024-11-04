@@ -11,12 +11,14 @@ const messageTypeQueue = async (incomingMessage) => {
     try {
       parsedMessage = JSON.parse(incomingMessage.content.toString());
       const { type } = parsedMessage;
-      await sendToLog("info", type);
+      // await sendToLog("info", type);
       let extractData;
       let response;
       switch (parsedMessage.type) {
-      
-
+       case QueueMessageType.login:
+        extractData = parsedMessage.data.userLogin;
+        response = await serviceLogic.login(extractData)
+        break
         default:
       }
 
@@ -26,9 +28,10 @@ const messageTypeQueue = async (incomingMessage) => {
         code: 200,
         data: response,
         error: false,
-        broadcastToAll: false,
       };
 
+      
+      
       await RabbitConnectionManager.pushMessageToQueue(
         RABBIT_MQ_INSTANCE_NAME,
         AUTH_SERVER,
